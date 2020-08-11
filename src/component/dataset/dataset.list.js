@@ -1,42 +1,51 @@
 import React, { Component } from 'react';
 import { Avatar } from 'antd'
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import fetchDatasets from './../../api/fetchDataset';
-import  checkItem  from './../../api/fetchDataset';
+import { fetchDatasets, checkItem, loadEdit } from './../../api/fetchDataset';
 
 
 class App extends Component {
+    constructor(props) {
+        super(props);
+    }
 
     componentDidMount() {
-        const { fetchDatasets } = this.props;       
-        fetchDatasets();
+        this.props.fetchDatasets();
     }
 
     onCheckItem() {
         const value = document.getElementsByName('dataset');
         let dem = 0;
+        let id;
+        let max = this.props.datasets.data.length;
         for (let i = 0; i < value.length; i++) {
             if (value[i].checked === true) {
-                dem++;
+                dem++;             
+                id = value[i].id
             }
         }
-        const { onCheckItem } = this.props;        
-        onCheckItem(dem);
+        if(dem === 0) {
+            this.props.checkItem(dem, true, true, false);
+        } else if (dem === 1) {
+            this.props.checkItem(dem, false, false, false);
+            this.props.loadEdit(id);
+        } else if (dem === max) {
+            this.props.checkItem(dem, true, false, true)
+        } else if (dem > 0) {
+            this.props.checkItem(dem, true, false, false)
+        }      
     }
 
 
     render() {
         const { datasets } = this.props;
-        const status = this.props.count;
         return (
             <div className="row"  >
-                {status}
                 {datasets.data && datasets.data.map((dataset) => (
                     <div className="data text-center" key={dataset._id} >
                         <div className='max-width-150'>
                             <div className="box">
-                                <input type="checkbox" id={dataset._id} name='dataset' onChange={this.onCheckItem} />
+                                <input type="checkbox" id={dataset._id} name='dataset' onClick={() => this.onCheckItem()} />
                             </div>
                             <div className="avt">
                                 <Avatar
@@ -64,13 +73,4 @@ const mapStateToProps = (state) => {
 
 };
 
-const mapDispatchToProps = (dispatch) =>
-    bindActionCreators(
-        {
-            fetchDatasets: fetchDatasets,
-            onCheckItem: checkItem
-        },
-        dispatch
-    );
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, { checkItem, fetchDatasets, loadEdit })(App);

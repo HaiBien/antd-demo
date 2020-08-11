@@ -1,10 +1,25 @@
-import { GET_DATASETS_PENDING, GET_DATASETS_SUCCESS, GET_DATASETS_ERROR, NEW_DATASETS, CHECK_UP, REMOVE_DATASET } from './actionDataset';
+import {
+    GET_DATASETS_PENDING,
+    GET_DATASETS_SUCCESS,
+    GET_DATASETS_ERROR,
+    NEW_DATASETS,
+    CHECK_UP,
+    REMOVE_DATASET,
+    CHECK_ALL,
+    LOAD_ID,
+    EDIT
+} from './actionDataset';
 
 const initialState = {
     loading: true,
     datasets: [],
     error: null,
-    count: 5,
+    count: 0,
+    edit: true,
+    del: true,
+    checkA: false,
+    id: '',
+    name: '',
 };
 
 export default function datasetsReducer(state = initialState, action) {
@@ -35,13 +50,30 @@ export default function datasetsReducer(state = initialState, action) {
         case CHECK_UP:
             return {
                 ...state,
-                // count: this.count + 1
-                count: action.payload,
+                count: action.payload.count,
+                edit: action.payload.edit,
+                del: action.payload.del,
+                checkA: action.payload.checkA,
             }
         case REMOVE_DATASET:
             return {
                 ...state,
                 datasets: action.payload,
+            }
+        case CHECK_ALL:
+            return {
+                ...state,
+                checkA: action.payload,
+            }
+        case LOAD_ID:
+            return {
+                ...state,
+                id: action.payload,
+            }
+        case EDIT:
+            return {
+                ...state,
+                name: action.payload,
             }
         default:
             return state;

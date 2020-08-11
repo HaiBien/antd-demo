@@ -1,6 +1,6 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import { Layout, Typography, Space, Button, Modal } from 'antd';
+import { Layout, Typography, Space, Button, Modal, notification } from 'antd';
 import { BrowserRouter as Router } from 'react-router-dom';
 import CreateDataset from './create-dataset'
 import EditDataset from './edit-dataset'
@@ -8,10 +8,9 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import '../../../src/index.css'
 import './dataset.css'
-import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faFolderPlus, faTrashAlt, faListUl } from '@fortawesome/free-solid-svg-icons'
-import { deleteDataset } from '../../api/fetchDataset';
+import { deleteDataset, checkItem, checkAllItem, LoadEditDataset } from '../../api/fetchDataset';
 import { connect } from 'react-redux';
 import DatasetList from './dataset.list';
 
@@ -26,14 +25,10 @@ class DatasetIndex extends React.Component {
     this.state = {
       modal1Visible: false,
       modal2Visible: false,
-      checkAll: false,
       id: '',
-      delete: true,
-      edit: true,
+      check: false,
     };
     this.checkAll = this.checkAll.bind(this);
-    this.onCheck = this.onCheck.bind(this)
-
   }
 
 
@@ -44,6 +39,7 @@ class DatasetIndex extends React.Component {
   setModal2Visible(modal2Visible) {
     this.setState({ modal2Visible });
   }
+
   refresh = () => {
     window.location.reload();
   }
@@ -68,7 +64,7 @@ class DatasetIndex extends React.Component {
           let res = await this.props.deleteDataset(array[a])
           a--
         }
-        toast.success('Xóa thành công!', { autoClose: 2000, pauseOnHover: false })
+        notification.success({ message: "success", duration: 2.5 });
 
       },
       onCancel() {
@@ -76,75 +72,38 @@ class DatasetIndex extends React.Component {
     });
   }
 
+  loadEdit() {
+    this.props.LoadEditDataset(this.props.id)
+  }
+
   async checkAll() {
     var onCheck = document.getElementsByName("dataset");
     var check = document.getElementsByName('check');
-    await this.setState({
-      checkAll: !this.state.checkAll,
-      edit: true,
-    });
-    if (this.state.checkAll === true) {
-      this.setState({ delete: false })
+    if(this.props.checkA === true)
+    {
+      this.props.checkAllItem(false)
     } else {
-      this.setState({ delete: true })
+      this.props.checkAllItem(true)
     }
     for (var i = 0; i < onCheck.length; i++) {
-      if (onCheck[i].checked !== check[0].checked) {
+      if (onCheck[i].checked === this.props.checkA) {
         onCheck[i].checked = !onCheck[i].checked
       }
     }
+    if (check[0].checked === true) {
+      this.props.checkItem(this.props.datasets.data.length, true, false, true)
+    } else {
+      this.props.checkItem(0, true, true, false)
+    }
+    
   }
 
   componentDidMount() {
-    if(this.props.count > 0){
-      this.setState({ delete: false})
-    }
-    if(this.props.count === 1) {
-      this.setState({ edit: false})
-    }
-  }
-
-  checkEdit() {
-    var checkbox = document.getElementsByName('dataset');
-    let value;
-    let i = 0;
-    while (i < checkbox.length) {
-      if (checkbox[i].checked === true) {
-        value = checkbox[i].id
-        // i = checkbox.length
-        this.setState({ id: value })
-        break;
-      }
-      else {
-        i++;
-      }
-    }
-  }
-  
-  async onCheck() {
-    var value = document.getElementsByName("dataset");
-    var dem = 0;
-    for (var i = 0; i < value.length; i++) {
-      if (value[i].checked === true) {
-        dem++;
-      }
-    }
-    await this.setState({ count: dem });
-    if (this.state.count === 1) {
-      this.setState({ edit: false });
-    } else {
-      this.setState({ edit: true });
-    }
-    if (this.state.count > 0) {
-      this.setState({ delete: false });
-    } else {
-      this.setState({ delete: true });
-    }
   }
 
   render() {
     const status = this.props.count
-    const check = (this.state.checkAll ? ' Un selected' : ' Selected');
+    const check = (this.props.checkA ? ' Unselected' : ' Selected');
     return (
       <Router>
         <Layout>
@@ -153,18 +112,18 @@ class DatasetIndex extends React.Component {
             <hr />
             <Space size={12}>
               <div>
-                <input type='checkbox' className="size-2" name='check' onClick={this.checkAll} />
+                <input type='checkbox' className="size-2" name='check' checked={this.props.checkA} onClick={this.checkAll} />
                 <span className='size-2'>{check}</span>
               </div>
               <Button type="primary" id='create' onClick={() => this.setModal1Visible(true)}>
                 <FontAwesomeIcon className='size-1-5' icon={faFolderPlus} />
               </Button>
 
-              <Button type="primary" id='edit' onClick={() => { this.setModal2Visible(true); this.checkEdit(); }} disabled={this.state.edit} >
+              <Button type="primary" id='edit' onClick={() => { this.setModal2Visible(true); this.loadEdit() }} disabled={this.props.edit} >
                 <FontAwesomeIcon className='size-1-5' icon={faEdit} />
               </Button>
 
-              <Button type="primary" id='delete' onClick={this.showConfirmDelete} disabled={this.state.delete}>
+              <Button type="primary" id='delete' onClick={this.showConfirmDelete} disabled={this.props.del}>
                 <FontAwesomeIcon className='size-1-5' icon={faTrashAlt} />
               </Button>
 
@@ -216,10 +175,10 @@ class DatasetIndex extends React.Component {
                   </Button>
               ]}
             >
-              <EditDataset item={this.state.id} history={this.props.history} />
+              <EditDataset />
 
             </Modal>
-            {status}
+               <h4> count = {status}</h4>     
             { <DatasetList />}
           </Content>
         </Layout>
@@ -232,8 +191,14 @@ class DatasetIndex extends React.Component {
 const mapStateToProps = (state) => {
   return ({
       count: state.datasetsReducer.count,
+      edit: state.datasetsReducer.edit,
+      del: state.datasetsReducer.del,
+      datasets: state.datasetsReducer.datasets,
+      checkA: state.datasetsReducer.checkA,
+      id: state.datasetsReducer.id,
+
   })
 };
 
-export default connect(mapStateToProps,  { deleteDataset } )(DatasetIndex);
+export default connect(mapStateToProps,  { deleteDataset, checkItem, checkAllItem, LoadEditDataset } )(DatasetIndex);
 

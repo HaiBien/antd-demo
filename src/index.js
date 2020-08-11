@@ -1,17 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import store from '../src/state/store'
 import { Layout, Menu } from 'antd';
 import { DatabaseOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import 'antd/dist/antd.css';
 import './index.css';
-import Dataset from './dataset/dataset.index'
-import OverView from './overView/view.index'
-import Model from './model/model.index'
-import Deploy from './deploy/deploy.index'
-import User from './setting/user/user.index'
+import Dataset from './component/dataset/dataset.index'
+import OverView from './component/overView/view.index'
+import Model from './component/model/model.index'
+import Deploy from './component/deploy/deploy.index'
+import User from './component/setting/user/user.index'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Provider } from 'react-redux';
 const { SubMenu } = Menu;
 const { Header, Sider } = Layout;
 
@@ -30,8 +32,6 @@ export default class Index extends React.Component {
             <Sider width={200} className="site-layout-background border-menu">
               <Menu
                 mode="inline"
-                defaultSelectedKeys={['sub0']}
-                defaultOpenKeys={['sub0']}
                 style={{ height: '100%'}}
               >
                 <Menu.Item key="sub0" > <Link to="/" > HOME</Link></Menu.Item>
@@ -58,4 +58,8 @@ export default class Index extends React.Component {
 }
 
 
-ReactDOM.render(<Index />, document.getElementById('root'));
+ReactDOM.render(
+  <Provider store={store}>
+  <Index />
+  </Provider>
+, document.getElementById('root'));

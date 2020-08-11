@@ -4,6 +4,9 @@ export const GET_DATASETS_ERROR = 'GET_DATASETS_ERROR';
 export const NEW_DATASETS = 'NEW_DATASETS';
 export const CHECK_UP = 'CHECK_UP';
 export const REMOVE_DATASET = 'REMOVE_DATASET';
+export const LOAD_ID = 'LOAD_ID';
+export const CHECK_ALL = 'CHECK_ALL';
+export const EDIT = 'EDIT';
 
 export function fetchDatasetsPending() {
     return {
@@ -30,10 +33,21 @@ export function newDataset(datasets) {
         payload: datasets
     }
 }
-export function checkUp(count) {
+export function checkUp(count, edit, del, checkA) {
     return {
         type: CHECK_UP,
-        payload: count
+        payload: {
+            count,
+            edit,
+            del,
+            checkA,
+        }
+    }
+}
+export function checkAll(checkA) {
+    return {
+        type: CHECK_ALL,
+        payload: checkA,
     }
 }
 
@@ -41,5 +55,18 @@ export function removeDataset(datasets) {
     return {
         type: REMOVE_DATASET,
         payload: datasets
+    }
+}
+export function loadId(id) {
+    return {
+        type: LOAD_ID,
+        payload: id,
+    }
+}
+
+export function edit(name) {
+    return {
+        type: EDIT,
+        payload: name,
     }
 }
