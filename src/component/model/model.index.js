@@ -3,14 +3,13 @@ import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import { Layout, Breadcrumb, Typography } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router  } from 'react-router-dom';
 import 'antd/dist/antd.css';
-import './../index.css'
-//import overView from './../overView/view.index'
+import '../../../src/index.css'
 const { Content } = Layout;
 const { Title } = Typography
 
-export default class DeployIndex extends React.Component {
+export default class ModelIndex extends React.Component {
 
     render() {
         return (
@@ -22,10 +21,7 @@ export default class DeployIndex extends React.Component {
                     </Breadcrumb>
                     <Content className="Content">
                         <Content className="site-layout">
-                            <Title>Deploy</Title>
-
-
-
+                            <Title>Model</Title>
                         </Content>
                     </Content>
                 </Layout>
@@ -34,4 +30,4 @@ export default class DeployIndex extends React.Component {
 
     }
 }
-ReactDOM.render(<DeployIndex />, document.getElementById('root'));
+ReactDOM.render(<ModelIndex />, document.getElementById('root'));

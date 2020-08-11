@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import { Layout, Breadcrumb, Typography } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
-import './../index.css'
+import '../../../src/index.css'
 const { Content } = Layout;
 const { Title } = Typography
 
