@@ -42,7 +42,7 @@ class EditDataset extends Component {
 }
 
 const mapStateToProps = (state) => {
-    return ({
+    return ({ 
         id: state.datasetsReducer.id,
         name: state.datasetsReducer.name,
     })

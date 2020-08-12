@@ -111,7 +111,7 @@ class DatasetIndex extends React.Component {
             <Text className="text-header size-2"> <FontAwesomeIcon icon={faListUl} /> List Datasets</Text><br />
             <hr />
             <Space size={12}>
-              <div>
+              <div >
                 <input type='checkbox' className="size-2" name='check' checked={this.props.checkA} onClick={this.checkAll} />
                 <span className='size-2'>{check}</span>
               </div>
