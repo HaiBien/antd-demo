@@ -17,6 +17,7 @@ class DatasetForm extends Component {
             console.log('a');
             console.log('2');
             console.log('3');
+            console.log('4');
         this.setState({
             name: e.target.value
         });
